@@ -1,0 +1,30 @@
+{
+	"name": "file-uploader",
+	"version": "1.0.0",
+	"description": "",
+	"private": true,
+	"main": "main.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "electron . --plugins=\"./plugins\" --readDir=%USERPROFILE%/Pictures --saveDir=\"./plugins\"",
+		"start": "electron .",
+		"pack": "electron-builder",
+		"dist": "electron-builder --dir"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"dotenv": "^16.3.1",
+		"electron": "^26.2.2",
+		"electron-builder": "^23.6.0"
+	},
+	"dependencies": {
+		"electron-prompt": "^1.7.0"
+	},
+	"build": {
+		"appId": "io.github.zukio.file-uploader",
+		"mac": {
+			"category": "public.app-category.developer-tools"
+		}
+	}
+}
