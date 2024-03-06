@@ -195,9 +195,6 @@ if (!gotTheLock) {
   });
 
   function getFilters() {
-    let config = {
-      filters: [{ name: "All Files", extensions: ["*"] }],
-    };
     if (
       typeof headers === "undefined" ||
       !headers.Accept ||
@@ -205,36 +202,30 @@ if (!gotTheLock) {
       headers.Accept == "*/*" ||
       headers.Accept[0] === "*/*"
     ) {
-      return config;
+      return [{ name: "All Files", extensions: ["*"] }];
     }
-    // Accept ヘッダから extensions を抽出
-    const extensions = headers.Accept.map((accept) => accept.split("/")[1]);
+    const filters = [];
+    // Accept ヘッダから extensions を抽出 // MIMEタイプを小文字に変換してから処理
+    const extensions = headers.Accept.map((accept) => accept.split("/")[1].toLowerCase());
 
     // Videos と Images のカウント
-    const videoCount = headers.Accept.filter((accept) => accept.startsWith("Videos/")).length;
-    const imageCount = headers.Accept.filter((accept) => accept.startsWith("Images/")).length;
+    const videoTypes = headers.Accept.filter((accept) => accept.toLowerCase().startsWith("videos/"));
+    const imageTypes = headers.Accept.filter((accept) => accept.toLowerCase().startsWith("images/"));
 
-    // 全て Videos
-    if (videoCount === headers.Accept.length) {
-      config.filters = [{ name: "Videos", extensions: extensions }];
+    if (videoTypes.length > 0) {
+      const videoExtensions = videoTypes.map((accept) => accept.split("/")[1]);
+      filters.push([{ name: "Videos", extensions: videoExtensions }]);
+      if (videoExtensions.length === headers.Accept.length) {
+        // 全て Videos
+      }
     }
-    // 全て Images
-    else if (imageCount === headers.Accept.length) {
-      config.filters = [{ name: "Images", extensions: extensions }];
+    if (imageTypes.length > 0) {
+      const imageExtensions = imageTypes.map((accept) => accept.split("/")[1]);
+      filters.push([{ name: "Images", extensions: imageExtensions }]);
+      if (imageExtensions.length === headers.Accept.length) {
+        // 全て Images
+      }
     }
-    // Videos と Images が混在
-    else if (videoCount > 0 && imageCount > 0) {
-      const videoExtensions = headers.Accept.filter((accept) => accept.startsWith("Videos/")).map(
-        (accept) => accept.split("/")[1]
-      );
-      const imageExtensions = headers.Accept.filter((accept) => accept.startsWith("Images/")).map(
-        (accept) => accept.split("/")[1]
-      );
-      config.filters = [
-        { name: "Videos", extensions: videoExtensions },
-        { name: "Images", extensions: imageExtensions },
-      ];
-    }
-    return config;
+    return filters;
   }
 }
