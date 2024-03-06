@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <title>File Uploader</title>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"
+  ></script>
+  <body>
+    <div
+      id="layerlock"
+      class="w-100 h-100 bg-dark position-fixed d-none"
+      style="z-index: 10; opacity: 0.5"
+    ></div>
+
+    <div class="container-fluid">
+      <form
+        id="upload"
+        method="post"
+        enctype="multipart/form-data"
+        class="position-relative needs-validation border-1"
+      >
+        <div class="row pt-3 bg-dark text-light">
+          <div class="mb-3 row align-items-center">
+            <div class="col-3">
+              <label
+                for="APIEP"
+                class="form-label"
+                >API</label
+              >
+            </div>
+            <div class="col-9">
+              <input
+                type="text"
+                class="form-control"
+                id="APIEP"
+                required
+              />
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center">
+            <div class="col-3">
+              <label
+                for="Authorization"
+                class="form-label"
+                >Authorization</label
+              >
+            </div>
+            <div class="col-1 form-label">Bearer</div>
+            <div class="col-8">
+              <input
+                type="password"
+                class="form-control"
+                id="Authorization"
+                required
+              />
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center">
+            <div class="col-3">
+              <label
+                for="projectId"
+                class="form-label"
+                >Project Id</label
+              >
+            </div>
+            <div class="col-9">
+              <input
+                type="text"
+                class="form-control"
+                id="projectId"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3 row align-items-center">
+            <div class="col-3">
+              <label
+                for="Authorization"
+                class="form-label"
+                >Accept</label
+              >
+            </div>
+            <div class="col-auto">
+              <input
+                type="text"
+                class="form-control"
+                id="Accept"
+                value="*/*"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="input-group p-5">
+          <input
+            type="button"
+            class="form-control"
+            id="inputFile"
+            aria-describedby="reqBtn"
+            aria-label="Upload"
+            accept="video/*"
+            required
+          />
+          <button
+            class="btn btn-outline-secondary disabled"
+            type="submit"
+            id="reqBtn"
+          >
+            Upload
+          </button>
+        </div>
+      </form>
+      <div
+        id="preview"
+        class="row px-5 d-none"
+      >
+        <div class="col-auto">
+          <video
+            id="videoPreview"
+            controls
+            style="max-height: 100px; max-width: fit-content"
+          ></video>
+        </div>
+        <div class="col-auto">
+          <img
+            id="qrCodeImage"
+            style="max-height: 100px; max-width: fit-content"
+          />
+        </div>
+      </div>
+      <div
+        id="debug"
+        class="d-none p-5"
+      >
+        <a
+          id="copyButton"
+          class="text-decoration-underline text-primaru"
+          >>> DLリンクをコピー</a
+        >
+        <p id="downloadLink"></p>
+        <button
+          id="save"
+          class="btn btn-secondary w-100"
+          type="submit"
+          disabled
+        >
+          Save QR
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // Main
+      // --------------------------------------------
+      let data = {};
+      const lockScreen = document.getElementById("layerlock");
+      // const parent = document.getElementById("container");
+      const form = document.querySelector("#upload");
+      const inputAPIEP = document.getElementById("APIEP");
+      const inputProjectId = document.getElementById("projectId");
+      const inputAuthorization = document.getElementById("Authorization");
+      const inputAccept = document.getElementById("Accept");
+      const inputFileBtn = document.getElementById("inputFile");
+      const reqBtn = document.getElementById("reqBtn");
+      const saveBtn = document.getElementById("save");
+      const copyBtn = document.getElementById("copyButton");
+      const videoPreview = document.getElementById("videoPreview");
+      const qrCodeImage = document.getElementById("qrCodeImage");
+      const downloadLink = document.getElementById("downloadLink");
+      const debug = document.getElementById("debug");
+
+      // [イベント] アプリ起動時
+      window.api.on("mounted", (apidata) => {
+        data = apidata.data;
+        if (Object.hasOwnProperty.call(data, "headers")) {
+          if (Object.hasOwnProperty.call(data.headers, "Authorization") && data.headers.Authorization) {
+            if (data.headers.Authorization.startsWith("Bearer ")) {
+              inputAuthorization.value = data.headers.Authorization.split(" ")[1];
+            } else {
+              inputAuthorization.value = data.headers.Authorization;
+            }
+          }
+          if (Object.hasOwnProperty.call(data.headers, "ProjectId") && data.headers.ProjectId) {
+            inputProjectId.value = data.headers.ProjectId;
+          }
+          if (Object.hasOwnProperty.call(data.headers, "Accept") && data.headers.Accept) {
+            inputAccept.value = data.headers.Accept;
+          }
+        }
+        if (Object.hasOwnProperty.call(data, "apiep") && data.apiep != null) {
+          inputAPIEP.value = data.apiep;
+        }
+        //debug.innerHTML = JSON.stringify(data);
+      });
+
+      // --------------------------------------------
+      // [イベント] Electronからのファイル選択ダイアログを開く
+      inputFileBtn.addEventListener("click", (event) => {
+        window.api
+          .openFileDialog()
+          .then(async (filePath) => {
+            await previewFile(filePath);
+            enableRequest(data.fileData != null);
+          })
+          .catch((error) => {
+            console.error("ファイル選択エラー:", error);
+          });
+      });
+
+      /*  [イベント] input type = "file" でファイルを選択したら
+         inputFileBtn.addEventListener("change", (event) => {
+                previewFile(event);
+                enableRequest(inputFileBtn.files.length > 0);
+              });*/
+
+      // ファイルからデータを読み取ったら、保存&追加ボタンを有効化
+      function enableSave(enable) {
+        saveBtn.disabled = !enable;
+        saveBtn.classList.toggle("disabled", !enable);
+        saveBtn.classList.toggle("btn-primary", enable);
+        saveBtn.classList.toggle("btn-secondary", !enable);
+        lockScreen.classList.toggle("d-none", true);
+        clearResponce(!enable);
+      }
+      function enableRequest(enable) {
+        reqBtn.disabled = !enable;
+        reqBtn.classList.toggle("disabled", !enable);
+        reqBtn.classList.toggle("btn-primary", enable);
+        reqBtn.classList.toggle("btn-outline-secondary", !enable);
+      }
+      function clearResponce(disable) {
+        debug.classList.toggle("d-none", disable);
+        if (disable) {
+          qrCodeImage.src = "";
+          downloadLink.textContent = "";
+        }
+      }
+
+      async function previewFile(filePath) {
+        /*const target = event.target; //as HTMLInputElement;
+                if (!window.File || !window.FileReader || (!window.FileList && window.Blob)) {
+                  alert("File APIに対応したブラウザでご確認ください");
+                  return;
+                }
+                const file = target.files[0];*/
+        const file = await getFile(filePath);
+        // 正常に処理できないファイルは送信以前に断ってください // QR-Driveでは projectData.allowedContentMaxSize でファイル上限を設定しています
+        if (file.size > 10485760) {
+          const conferm = alert("ファイルサイズが大きすぎます");
+          inputFileBtn.value = "";
+          return;
+        }
+        // 画像ファイルのプレビュー
+        // preview.src = await cvtFileToDataURI(file);
+        // 動画ファイルのプレビュー
+        if (file && file.type.startsWith("video/")) {
+          setVideo(file);
+        } else {
+          const conferm = alert("選択されたファイルは動画ではありません。");
+          inputFileBtn.value = "";
+        }
+        inputFileBtn.value = filePath.split("\\").pop();
+        data.fileData = file;
+      }
+      function setVideo(file) {
+        if (!file) {
+          inputFileBtn.value = "";
+          videoPreview.src = "";
+        } else {
+          videoPreview.src = URL.createObjectURL(file); // ファイルの内容からURLを生成
+          // videoPreview.play(); // プレビューを再生
+        }
+        preview.classList.toggle("d-none", !file);
+      }
+
+      // File | Blob オブジェクトを DataURI 文字列に変換します
+      async function cvtFileToDataURI(file) {
+        return new Promise((resolve, reject) => {
+          try {
+            var reader = new FileReader();
+            reader.onloadend = () => {
+              resolve(reader.result);
+            };
+            reader.readAsDataURL(file);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      }
+      // --------------------------------------------
+      // [イベント] フォーム送信時
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault(); // 規定の送信処理をキャンセル
+        lockScreen.classList.toggle("d-none", false);
+
+        const formData = new FormData();
+        /*if (inputFileBtn.files.length > 0) {
+                formData.append("file", inputFileBtn.files[0]); // 最初のファイルを追加
+              }*/
+        if (data.fileData != null) {
+          formData.append("file", data.fileData);
+        }
+
+        const param = {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + inputAuthorization.value, // 'Baser'ではなく'Bearer'が正しい認証スキーム
+            Accept: inputAccept.value ? inputAccept.value.split(",") : ["*/*"],
+            ProjectId: inputProjectId.value,
+          },
+          body: formData,
+        };
+
+        // アップロード
+        try {
+          const response = await fetch(inputAPIEP.value, param);
+          const json = await response.json();
+          // 画像ファイルのプレビュー
+          qrCodeImage.src = json.qr;
+          enableSave(true);
+          // ダウンロードリンク
+          downloadLink.textContent = JSON.stringify(json.text);
+        } catch (error) {
+          lockScreen.classList.toggle("d-none", true);
+          const conferm = alert("エラー\n" + JSON.stringify(param));
+        }
+      });
+      // [イベント] コピー処理をボタンのクリックイベントにバインド
+      copyBtn.addEventListener("click", function () {
+        // テキストをクリップボードにコピー
+        navigator.clipboard
+          .writeText(downloadLink.textContent)
+          .then(() => {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = "コピーしました";
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+            }, 1000);
+          })
+          .catch((err) => {
+            // コピーが失敗した場合の処理
+            console.error("リンクのコピーに失敗しました:", err);
+            // ここに失敗時のユーザーフィードバックを追加できます（例: エラーメッセージ表示）
+          });
+      });
+
+      // --------------------------------------------
+      /* [イベント] 保存ボタンを押して保存先を開く
+            saveBtn.addEventListener("click", function () {
+              // 現在のタイムスタンプを取得
+              const timestamp = new Date().getTime();
+              // ファイル名を生成（例: qr_1631025412345.png）
+              const fileName = `qr_${timestamp}.png`;
+              // ダウンロードリンクを生成
+              const downloadLink = document.createElement("a");
+              // リンクにQRコードのURLを画像要素のsrc属性に設定
+              downloadLink.href = qrCodeImage.src;
+              // ダウンロード時のファイル名を設定
+              downloadLink.download = fileName;
+              // リンクをクリックしてダウンロードを実行
+              downloadLink.click();
+            });*/
+
+      // [イベント]  Electronからのダイアログで保存先を特定して開く
+      saveBtn.addEventListener("click", function () {
+        const content = qrCodeImage.src;
+        window.api
+          .saveFileDialog(content)
+          .then((result) => {
+            if (result) {
+              enableSave(false);
+              enableRequest(false);
+              setVideo(null);
+            } else {
+              console.log("ファイル保存がキャンセルされました");
+            }
+          })
+          .catch((error) => {
+            console.error("ファイル保存エラー:", error);
+          });
+      });
+
+      // --------------------------------------------
+      // Formのアップロード機能を使用せずに、ローカルファイルからFileデータを取得し、 ボタン操作することなく、アップロードしたい場合
+      async function getFile(filepath) {
+        const res = await fetch(filepath);
+        const blob = await res.blob();
+        return new File([blob], filepath, { type: blob.type });
+      }
+      async function getFormData(filepath) {
+        const formData = new FormData();
+        const localFile = await getFile(filepath);
+        formData.append("file", localFile);
+        return formData;
+      }
+    </script>
+  </body>
+</html>
