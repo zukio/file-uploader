@@ -9,7 +9,8 @@
 		"dev": "electron . --plugins=\"./plugins\" --readDir=%USERPROFILE%/Pictures --saveDir=\"./plugins\"",
 		"start": "electron .",
 		"pack": "electron-builder",
-		"dist": "electron-builder --dir"
+		"dist": "electron-builder --dir",
+		"mac": "electron-builder --mac --x64"
 	},
 	"author": "",
 	"license": "ISC",
