@@ -7,17 +7,18 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "electron . --plugins=\"./plugins\" --readDir=%USERPROFILE%/Pictures --saveDir=\"./plugins\"",
+		"macdev": "electron . --plugins=\"$(pwd)\"/plugins --readDir=$HOME/Pictures --saveDir=\"$(pwd)\"/plugins",
 		"start": "electron .",
 		"pack": "electron-builder",
 		"dist": "electron-builder --dir",
-		"mac": "npx electron-builder --dir --mac --universal"
+		"mac": "npx electron-builder --mac --universal"
 	},
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
 		"dotenv": "^16.3.1",
-		"electron": "^26.2.2",
-		"electron-builder": "^23.6.0"
+		"electron": "^29.1.1",
+		"electron-builder": "^24.13.3"
 	},
 	"dependencies": {
 		"electron-prompt": "^1.7.0"
