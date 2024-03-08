@@ -11,6 +11,8 @@ function readPlugins(dirPath) {
   pluginDir = dirPath;
 
   fs.readdirSync(pluginDir).forEach((file) => {
+    // `._`で始まるファイルを無視
+    if (file.startsWith("._")) return;
     const filePath = path.join(pluginDir, file);
 
     // ファイル or ディレクトリチェック
