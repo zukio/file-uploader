@@ -7,10 +7,11 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "electron . --plugins=\"./plugins\" --readDir=%USERPROFILE%/Pictures --saveDir=\"./plugins\"",
+		"macdev": "electron . --plugins=\"$(pwd)\"/plugins --readDir=$HOME/Pictures --saveDir=\"$(pwd)\"/plugins",
 		"start": "electron .",
 		"pack": "electron-builder",
 		"dist": "electron-builder --dir",
-		"mac": "electron-builder --mac --x64"
+		"mac": "npx electron-builder --mac --universal"
 	},
 	"author": "",
 	"license": "ISC",
