@@ -51,7 +51,14 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	tell application "Finder"		set t to (get target of front window)		set f to (POSIX path of (t as alias))		--display dialog f -- 元のPOSIXパスを表示		return {f as text, t as alias}	end tellend run</string>
+					<string>-- スクリプト（.workflow）が置かれたカレントディレクトリのパスを取得on run {input, parameters}	tell application "Finder"		set t to (get target of front window)		set f to (POSIX path of (t as alias))		--display dialog f -- 元のPOSIXパスを表示		return {f as text, t as alias}	end tellend run</string>
+				</dict>
+				<key>ActionRuntimeParameters</key>
+				<dict>
+					<key>source</key>
+					<string>-- スクリプト（.workflow）が置かれたカレントディレクトリのパスを取得on run {input, parameters}	tell application "Finder"		set t to (get target of front window)		set f to (POSIX path of (t as alias))		--display dialog f -- 元のPOSIXパスを表示		return {f as text, t as alias}	end tellend run</string>
+					<key>temporary items path</key>
+					<string>/var/folders/5x/xny9vh7j4q7byr4bykv8ytgh0000gp/T/2A0FEF30-4400-49D8-8006-5BF6C6665B6D/1/com.apple.Automator.RunScript</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -68,15 +75,15 @@
 				<key>Class Name</key>
 				<string>RunScriptAction</string>
 				<key>InputUUID</key>
-				<string>01A8A873-E658-4387-9C50-91FC03EC4195</string>
+				<string>06335AFC-D864-4352-BC2B-4F0F59E4CDFB</string>
 				<key>Keywords</key>
 				<array>
 					<string>実行</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>461433E0-EDEF-46F7-836F-5EE1764E2326</string>
+				<string>72C0CC69-9793-4BDA-AE7D-A50D3CF5D53B</string>
 				<key>UUID</key>
-				<string>65CFC121-9AEB-488A-A5BD-51B867C13723</string>
+				<string>28260A69-5BBC-4DCD-8AA8-ED2C2983881B</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -102,10 +109,12 @@ end run</string>
 						<string>0</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>450.500000:247.000000</string>
+				<string>450.500000:315.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -153,7 +162,14 @@ end run</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>-- 得られたパス（f）を基に、必要な変更を加えるon run {input, parameters}	repeat with i in input		-- 望ましいサブディレクトリへのパスを組み立て		set desiredPath to (i as text) &amp; "dist/mac-universal/"		--display dialog desiredPath -- 変更後のパスを表示		return desiredPath	end repeatend run-- Finder形式のパスをUnix形式に変換するハンドラon convertPathToUnix(finderPath)	-- ドライブ名を"/Volumes/"に置き換え	set volumeName to word 1 of finderPath	set unixPath to "/Volumes/" &amp; text 2 thru -1 of volumeName &amp; finderPath	-- コロン":"をスラッシュ"/"に置き換え	set AppleScript's text item delimiters to ":"	set textItems to text items of unixPath	set AppleScript's text item delimiters to "/"	set unixPath to textItems as string	-- 末尾のスラッシュを除去（もし必要なら）	if unixPath ends with "/" then set unixPath to text 1 thru -2 of unixPath	return unixPathend convertPathToUnix</string>
+					<string>-- カレントディレクトリ（f）を基に、APP実行ファイルがあるディレクトリのパスを取得on run {input, parameters}	repeat with i in input		-- 望ましいサブディレクトリへのパスを組み立て		set desiredPath to (i as text) &amp; "dist/mac-universal/"		--display dialog desiredPath -- 変更後のパスを表示		return desiredPath	end repeatend run-- Finder形式のパスをUnix形式に変換するハンドラon convertPathToUnix(finderPath)	-- ドライブ名を"/Volumes/"に置き換え	set volumeName to word 1 of finderPath	set unixPath to "/Volumes/" &amp; text 2 thru -1 of volumeName &amp; finderPath	-- コロン":"をスラッシュ"/"に置き換え	set AppleScript's text item delimiters to ":"	set textItems to text items of unixPath	set AppleScript's text item delimiters to "/"	set unixPath to textItems as string	-- 末尾のスラッシュを除去（もし必要なら）	if unixPath ends with "/" then set unixPath to text 1 thru -2 of unixPath	return unixPathend convertPathToUnix</string>
+				</dict>
+				<key>ActionRuntimeParameters</key>
+				<dict>
+					<key>source</key>
+					<string>-- カレントディレクトリ（f）を基に、APP実行ファイルがあるディレクトリのパスを取得on run {input, parameters}	repeat with i in input		-- 望ましいサブディレクトリへのパスを組み立て		set desiredPath to (i as text) &amp; "dist/mac-universal/"		--display dialog desiredPath -- 変更後のパスを表示		return desiredPath	end repeatend run-- Finder形式のパスをUnix形式に変換するハンドラon convertPathToUnix(finderPath)	-- ドライブ名を"/Volumes/"に置き換え	set volumeName to word 1 of finderPath	set unixPath to "/Volumes/" &amp; text 2 thru -1 of volumeName &amp; finderPath	-- コロン":"をスラッシュ"/"に置き換え	set AppleScript's text item delimiters to ":"	set textItems to text items of unixPath	set AppleScript's text item delimiters to "/"	set unixPath to textItems as string	-- 末尾のスラッシュを除去（もし必要なら）	if unixPath ends with "/" then set unixPath to text 1 thru -2 of unixPath	return unixPathend convertPathToUnix</string>
+					<key>temporary items path</key>
+					<string>/var/folders/5x/xny9vh7j4q7byr4bykv8ytgh0000gp/T/2A0FEF30-4400-49D8-8006-5BF6C6665B6D/1/com.apple.Automator.RunScript</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -170,15 +186,15 @@ end run</string>
 				<key>Class Name</key>
 				<string>RunScriptAction</string>
 				<key>InputUUID</key>
-				<string>68A6CCC5-5B30-4A24-BB9E-FD6364488BEC</string>
+				<string>C0A7567E-628C-4F4A-9D38-763149C43BF6</string>
 				<key>Keywords</key>
 				<array>
 					<string>実行</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>419DD46D-2CAB-4210-86AF-EB535535BE48</string>
+				<string>646BCC3D-4534-41F3-BAFF-113A9DB0B3DD</string>
 				<key>UUID</key>
-				<string>06E30681-3EF5-4784-B8A6-A9B75BE139E4</string>
+				<string>03AA29F1-DCAF-402D-B20D-2DD3624FF5B6</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -204,10 +220,12 @@ end run</string>
 						<string>0</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>450.500000:492.000000</string>
+				<string>450.500000:560.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -263,7 +281,8 @@ end run</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>CurrentDirectory = $1
+					<string># APPの実行ファイルがあるディレクトリへ移動して実行
+CurrentDirectory = $1
 cd $1
 ./file-uploader.app/Contents/MacOS/file-uploader --plugins=$1/plugins --readDir=$HOME/Pictures --saveDir=$HOME/Desktop
 </string>
@@ -275,6 +294,25 @@ cd $1
 					<string>/bin/zsh</string>
 					<key>source</key>
 					<string></string>
+				</dict>
+				<key>ActionRuntimeParameters</key>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<string># APPの実行ファイルがあるディレクトリへ移動して実行
+CurrentDirectory = $1
+cd $1
+./file-uploader.app/Contents/MacOS/file-uploader --plugins=$1/plugins --readDir=$HOME/Pictures --saveDir=$HOME/Desktop
+</string>
+					<key>CheckedForUserDefaultShell</key>
+					<true/>
+					<key>inputMethod</key>
+					<integer>1</integer>
+					<key>shell</key>
+					<string>/bin/zsh</string>
+					<key>source</key>
+					<string></string>
+					<key>temporary items path</key>
+					<string>/var/folders/5x/xny9vh7j4q7byr4bykv8ytgh0000gp/T/2A0FEF30-4400-49D8-8006-5BF6C6665B6D/1/com.apple.RunShellScript</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.RunShellScript</string>
@@ -291,7 +329,7 @@ cd $1
 				<key>Class Name</key>
 				<string>RunShellScriptAction</string>
 				<key>InputUUID</key>
-				<string>598598D2-2712-4222-BC3C-60E0E33D16C2</string>
+				<string>5C5AF7D7-8A0F-4B2A-AE95-C90CE10C8899</string>
 				<key>Keywords</key>
 				<array>
 					<string>シェル</string>
@@ -301,9 +339,9 @@ cd $1
 					<string>UNIX</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>5FF0BAA7-7A56-4AAE-8710-E1487C974BFB</string>
+				<string>BE8DE698-5558-4A9D-BF40-E688900B458B</string>
 				<key>UUID</key>
-				<string>BA10E65D-D4C6-4215-B4DA-26710876F023</string>
+				<string>F97408E7-548F-415E-9C9C-2F81BF800A3A</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -376,10 +414,12 @@ cd $1
 						<string>4</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>450.500000:674.000000</string>
+				<string>450.500000:742.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -389,38 +429,25 @@ cd $1
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>B2227C53-70A6-4A2E-925D-31BA0B8725DC</key>
+		<key>569BBFE3-204A-4DD0-ADAD-5EC92EAD9270</key>
 		<dict>
 			<key>from</key>
-			<string>06E30681-3EF5-4784-B8A6-A9B75BE139E4 - 06E30681-3EF5-4784-B8A6-A9B75BE139E4</string>
+			<string>03AA29F1-DCAF-402D-B20D-2DD3624FF5B6 - 03AA29F1-DCAF-402D-B20D-2DD3624FF5B6</string>
 			<key>to</key>
-			<string>BA10E65D-D4C6-4215-B4DA-26710876F023 - BA10E65D-D4C6-4215-B4DA-26710876F023</string>
+			<string>F97408E7-548F-415E-9C9C-2F81BF800A3A - F97408E7-548F-415E-9C9C-2F81BF800A3A</string>
 		</dict>
-		<key>BF28F319-0A77-4247-95B9-DB4916C8D5B7</key>
+		<key>F145485C-940F-44AC-92E4-ACFF037F2C8B</key>
 		<dict>
 			<key>from</key>
-			<string>65CFC121-9AEB-488A-A5BD-51B867C13723 - 65CFC121-9AEB-488A-A5BD-51B867C13723</string>
+			<string>28260A69-5BBC-4DCD-8AA8-ED2C2983881B - 28260A69-5BBC-4DCD-8AA8-ED2C2983881B</string>
 			<key>to</key>
-			<string>06E30681-3EF5-4784-B8A6-A9B75BE139E4 - 06E30681-3EF5-4784-B8A6-A9B75BE139E4</string>
+			<string>03AA29F1-DCAF-402D-B20D-2DD3624FF5B6 - 03AA29F1-DCAF-402D-B20D-2DD3624FF5B6</string>
 		</dict>
 	</dict>
-	<key>variables</key>
-	<array>
-		<dict>
-			<key>UUID</key>
-			<string>AFB173A1-FDB8-4C7F-9EA3-1714E937B312</string>
-			<key>identifier</key>
-			<string>com.apple.Automator.Variable.Path</string>
-			<key>name</key>
-			<string>パス</string>
-			<key>value</key>
-			<string>~/Desktop</string>
-		</dict>
-	</array>
 	<key>workflowMetaData</key>
 	<dict>
 		<key>workflowTypeIdentifier</key>
-		<string>com.apple.Automator.workflow</string>
+		<string>com.apple.Automator.application</string>
 	</dict>
 </dict>
 </plist>
